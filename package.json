@@ -1,0 +1,9 @@
+{
+  "name": "reai-webtypes",
+  "version": "1.0.0",
+  "private": true,
+  "web-types": "web-types.json",
+  "devDependencies": {
+    "lit": "^3.3.1"
+  }
+}

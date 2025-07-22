@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <link rel="stylesheet" th:href="@{/assets/report/balance-sheet.css}">
+</head>
+<body>
+<main layout:fragment="content">
+    <div>
+
+        <div class="r-balance-sheet-container">
+
+
+            <div class="r-filters-section">
+                <div class="r-filters-form" th:if="${user != null and user.ctx.currentTenant != null}">
+
+                    <div class="r-filter-group">
+                        <label class="r-filter-label" for="startDate" th:text="#{start_date}" />
+                        <wa-input type="date"
+                                  size="small"
+                                  id="startDate"
+                                  name="startDate"
+                                  th:value="${startDate}"
+                                  th:hx-get="'/report/profit-loss'"
+                                  th:hx-target="'#content-area'"
+                                  th:hx-indicator="'#loading-indicator'"
+                                  th:hx-swap="'innerHTML'"
+                                  th:hx-trigger="'change'"
+                                  th:hx-include="'[name=\'endDate\']'"></wa-input>
+                    </div>
+
+                    <div class="r-filter-group">
+                        <label class="r-filter-label" for="endDate" th:text="#{end_date}" />
+                        <wa-input type="date"
+                                  size="small"
+                                  id="endDate"
+                                  name="endDate"
+                                  th:value="${endDate}"
+                                  th:hx-get="'/report/profit-loss'"
+                                  th:x-target="'#content-area'"
+                                  th:x-indicator="'#loading-indicator'"
+                                  th:x-swap="'innerHTML'"
+                                  th:x-trigger="'change'"
+                                  th:x-include="'[name=\'startDate\']'"></wa-input>
+                    </div>
+
+
+                    <div class="r-filter-group">
+                        <div id="loading-indicator" class="htmx-indicator r-loading-indicator">
+                            <wa-spinner size="small"></wa-spinner>
+                            <span style="margin-left: var(--wa-space-s);"th:text="#{loading}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-area">
+                <div th:fragment="tableContent">
+                    <div th:unless="${assetPostings.entries.empty && equityPostings.entries.empty && liabilityPostings.entries.empty}">
+                        <div style="overflow-x: auto;">
+
+                            <table class="r-balance-sheet-table">
+                                <thead>
+
+                                <tr>
+                                    <th style="width: 25%;" th:text="#{account}" />
+                                    <th style="width: 50%;" th:text="#{account_name}" />
+                                    <th class="r-amount-header" style="width: 25%;" th:text="#{amount}" />
+                                </tr>
+                                <tr>
+                                    <th style="width: 25%" th:text="#{assets}" />
+                                    <th style="width: 50%;"></th>
+                                    <th class="r-amount-header" style="width: 25%;"></th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${assetPostings.entries}">
+                                    <td>
+                                        <span class="r-account-number" th:text="${entry.accountNumber}"/>
+                                    </td>
+                                    <td>
+                                        <span class="r-account-name" th:text="${entry.accountName}"/>
+                                    </td>
+                                    <td class="r-amount-cell">
+                                            <span th:class="${entry.amountClass}"
+                                                  th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}"/>
+                                    </td>
+                                </tr>
+                                <tr></tr>
+                                </tbody>
+                                <tfoot>
+                                <tr class="r-total-row">
+                                    <td colspan="2" style="text-align: center;"><strong th:text="#{total}" />
+                                    <td class="r-amount-cell">
+                                        <strong th:text="${#numbers.formatDecimal(assetPostings.totalBalance, 1, 2)}"/>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+
+                            <table class="r-balance-sheet-table">
+                                <thead>
+                                <tr>
+                                    <th style="width: 25%" th:text="#{equity}" />
+                                    <th style="width: 50%;"></th>
+                                    <th class="r-amount-header" style="width: 25%;"></th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${equityPostings.entries}">
+                                    <td>
+                                        <span class="r-account-number" th:text="${entry.accountNumber}"/>
+                                    </td>
+                                    <td>
+                                        <span class="r-account-name" th:text="${entry.accountName}"/>
+                                    </td>
+                                    <td class="r-amount-cell">
+                                            <span th:class="${entry.amountClass}"
+                                                  th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}"/>
+                                    </td>
+                                </tr>
+                                <tr></tr>
+                                </tbody>
+                                <tfoot>
+                                <tr class="r-total-row">
+                                    <td colspan="2" style="text-align: center;"><strong th:text="#{total}" /></td>
+                                    <td class="r-amount-cell">
+                                        <strong th:text="${#numbers.formatDecimal(equityPostings.totalBalance, 1, 2)}"/>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                            <table class="r-balance-sheet-table">
+                                <thead>
+                                <tr>
+                                    <th style="width: 25%" th:text="#{liabilities}" />
+                                    <th style="width: 50%;"></th>
+                                    <th class="r-amount-header" style="width: 25%;"></th>
+
+                                </tr>
+
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${liabilityPostings.entries}">
+                                    <td>
+                                        <span class="r-account-number" th:text="${entry.accountNumber}"/>
+                                    </td>
+                                    <td>
+                                        <span class="r-account-name" th:text="${entry.accountName}"/>
+                                    </td>
+                                    <td class="r-amount-cell">
+                                            <span th:class="${entry.amountClass}"
+                                                  th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}"
+                                            />
+                                    </td>
+                                </tr>
+                                <tr></tr>
+                                </tbody>
+                                <tfoot>
+                                <tr class="r-total-row">
+                                    <td colspan="2" style="text-align: center;"><strong th:text="#{total}" /></td>
+                                    <td class="r-amount-cell">
+                                        <strong th:text="${#numbers.formatDecimal(liabilityPostings.totalBalance, 1, 2)}"/>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+
+
+                        </div>
+                    </div>
+
+
+                    <div th:if="${assetPostings.entries.empty && equityPostings.entries.empty && liabilityPostings.entries.empty}"
+                         class="r-empty-state">
+                        <div class="r-empty-state-icon">
+                            <wa-icon name="table"></wa-icon>
+                        </div>
+                        <h3 th:text="#{no_Data_available}" />
+                        <p th:text="#{no_posting_found}" />
+                        <p th:text="#{try_adjusting_date}" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+</body>
+</html>

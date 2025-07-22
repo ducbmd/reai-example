@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <link rel="stylesheet" th:href="@{/assets/fragments/company-search.css}">
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div>
+        <wa-card style="margin-bottom: var(--wa-space-m);">
+            <div style="padding: var(--wa-space-xl);">
+                <form id="createCompanyForm"
+                      th:object="${createCompanyRequest}"
+                      th:hx-post="'/htmx/tenant/create'"
+                      th:hx-target="'#form-messages'"
+                      th:hx-swap="'innerHTML'"
+                      th:hx-indicator="'#loading-indicator'">
+                    <div class="wa-stack">
+                        <div>
+                            <wa-input
+                                    id="name"
+                                    name="name"
+                                    th:label="#{company.create.form.name.label}"
+                                    th:field="*{name}"
+                                    th:placeholder="#{company.create.form.name.placeholder}"
+                                    size="medium"
+                                    required
+                                    autocomplete="off"
+                                    th:hx-get="'/htmx/company/search'"
+                                    th:hx-indicator="'#loading-indicator'"
+                                    th:hx-trigger="'input changed delay:200ms'"
+                                    th:hx-target="'#name-dropdown'"
+                                    th:hx-swap="'outerHTML'"
+                                    slot="trigger"
+                                    hx-include="[name='countryCode']">
+                            </wa-input>
+                            <div id="name-dropdown"></div>
+                        </div>
+                        <wa-input
+                                th:label="#{company.create.form.organization.label}"
+                                id="organizationNumber"
+                                name="organizationNumber"
+                                th:field="*{organizationNumber}"
+                                th:placeholder="#{company.create.form.organization.placeholder}"
+                                size="medium"
+                                required
+                                autocomplete="off">
+                        </wa-input>
+                        <wa-select id="countryCode" name="countryCode" th:field="*{countryCode}" required
+                                   th:label="#{company.create.form.country.label}">
+                            <wa-option value="NO" th:text="#{company.create.form.country.norway}"></wa-option>
+                        </wa-select>
+                        <small style="color: var(--wa-color-gray-60); display: block; margin-top: var(--wa-space-s);"
+                               th:text="#{company.create.form.country.help}"/>
+                        <!-- Form Messages -->
+                        <div id="form-messages" style="margin-bottom: var(--wa-space-m);"></div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <wa-button class="disabled:r-opacity-25"
+                                       type="submit" variant="success"
+                                       size="small"
+                                       id="submitButton">
+                                <span th:text="#{company.create.form.submit.button}"></span>
+                                <wa-spinner slot="end" id="loading-indicator" class="htmx-indicator"></wa-spinner>
+                            </wa-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </wa-card>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/assets/tenant/create.js}"></script>
+</th:block>
+</body>
+</html> 

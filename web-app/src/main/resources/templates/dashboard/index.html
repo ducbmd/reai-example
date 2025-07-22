@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <p>
+        <span th:text="#{dashboard.welcome.message}"/>
+        <span th:text="${user.username}"/>
+    </p>
+</main>
+</body>
+</html> 

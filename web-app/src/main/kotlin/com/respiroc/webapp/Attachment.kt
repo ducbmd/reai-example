@@ -10,6 +10,7 @@ import com.itextpdf.layout.element.Image
 import com.respiroc.util.repository.CustomJpaRepository
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.TenantId
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
@@ -40,6 +41,10 @@ class Attachment {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant? = null
+
+    @TenantId
+    @Column(name = "tenant_id", nullable = false, updatable = false)
+    open var tenantId: Long? = null
 }
 
 @Repository

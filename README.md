@@ -34,4 +34,4 @@ ln AI.md GEMINI.md # Gemini CLI
 ln AI.md .junie/guidelines.md # Jetbrains Junie
 ```
 
-If using a browser UI for AI, you can make a project and include it in "project instructions"# reai-example
+If using a browser UI for AI, you can make a project and include it in "project instructions"

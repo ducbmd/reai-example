@@ -7,6 +7,9 @@ import com.respiroc.webapp.controller.BaseController
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
+import org.hibernate.annotations.TenantId
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -128,9 +131,14 @@ class VoucherReceptionDocument {
     @Column(name = "sender_email")
     var senderEmail: String? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant_id", nullable = false)
-    lateinit var tenant: Tenant
+    @TenantId
+    @Column(name = "tenant_id", nullable = false, updatable = false)
+    open var tenantId: Long? = null
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "tenant_id", nullable = false, updatable = false, insertable = false)
+    open lateinit var tenant: Tenant
 }
 
 @Controller

@@ -3,6 +3,7 @@ package com.respiroc.webapp.domain.model
 import jakarta.persistence.*
 import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.io.Serializable
 import java.time.Instant
 
@@ -45,6 +46,10 @@ open class ApiKey : Serializable {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     open lateinit var createdAt: Instant
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    open lateinit var updatedAt: Instant
 
     @Column(name = "last_used_at")
     open var lastUsedAt: Instant? = null

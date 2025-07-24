@@ -58,20 +58,21 @@
     margin: 0 0 1rem 0;
 }
 
-wa-input, .wa-input {
+.input-group {
     display: block;
     width: 100%;
 }
 
-wa-input input, .wa-input input {
+.input-group input {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
-wa-input label, .wa-input label {
+.input-group label {
     display: block;
     margin-bottom: 0.25rem;
     font-weight: 500;

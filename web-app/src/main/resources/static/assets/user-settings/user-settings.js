@@ -2,7 +2,6 @@ let deleteKeyId = null;
 
 function showCreateModal() {
   document.getElementById("create-modal").classList.remove("hidden");
-  document.querySelector('#create-api-key-form input[name="name"]').focus();
 }
 
 function hideCreateModal() {
@@ -44,12 +43,9 @@ function confirmDelete() {
 }
 
 function handleCreateResponse(event) {
-  console.log("Response received:", event.detail);
-
   if (event.detail.xhr.status === 200) {
     try {
       const response = JSON.parse(event.detail.xhr.responseText);
-      console.log("Parsed response:", response);
 
       const keyDisplay = `
                 <div class="api-key-display">
@@ -63,8 +59,8 @@ function handleCreateResponse(event) {
                         <wa-button onclick="copyToClipboard('${response.key.replace(
                           /'/g,
                           "\\'"
-                        )}'); this.textContent='Copied!'; setTimeout(() => this.innerHTML='<span>📋</span> Copy', 2000)" size="small" variant="brand">
-                            <span>📋</span>
+                        )}'); this.textContent='Copied!'; setTimeout(() => this.innerHTML='<wa-icon name=\\'copy\\'></wa-icon> Copy', 2000)" size="small" variant="brand">
+                            <wa-icon name="copy"></wa-icon>
                             Copy
                         </wa-button>
                     </div>
@@ -75,11 +71,9 @@ function handleCreateResponse(event) {
       hideCreateModal();
       document.getElementById("show-key-modal").classList.remove("hidden");
     } catch (error) {
-      console.error("Error parsing response:", error);
       alert("Error creating API key. Please try again.");
     }
   } else {
-    console.error("Error response:", event.detail.xhr.status, event.detail.xhr.responseText);
     alert("Error creating API key. Please try again.");
   }
 }
@@ -87,9 +81,7 @@ function handleCreateResponse(event) {
 function copyToClipboard(text) {
   navigator.clipboard
     .writeText(text)
-    .then(() => {
-      console.log("API key copied to clipboard");
-    })
+    .then(() => {})
     .catch(() => {
       const textArea = document.createElement("textarea");
       textArea.value = text;
@@ -97,7 +89,6 @@ function copyToClipboard(text) {
       textArea.select();
       try {
         document.execCommand("copy");
-        console.log("API key copied to clipboard");
       } catch (err) {
         alert("Failed to copy to clipboard. Please copy manually.");
       }
@@ -105,7 +96,14 @@ function copyToClipboard(text) {
     });
 }
 
-// Event listeners for modal management
+document.addEventListener("htmx:configRequest", function (event) {
+  if (event.target.id === "create-api-key-form") {
+    if (!event.detail.parameters.name || event.detail.parameters.name.trim() === "") {
+      event.detail.parameters.name = "Secret key";
+    }
+  }
+});
+
 document.addEventListener("click", function (event) {
   const modals = document.querySelectorAll(".modal-overlay");
   modals.forEach(modal => {

@@ -10,6 +10,11 @@ import java.time.Instant
 @Table(name = "api_keys")
 open class ApiKey : Serializable {
 
+    companion object {
+        const val KEY_ID_LENGTH = 32
+        const val SECRET_LENGTH = 32
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -25,8 +30,8 @@ open class ApiKey : Serializable {
     @Column(name = "name", nullable = false)
     open lateinit var name: String
 
-    @Size(max = 32)
-    @Column(name = "key_id", nullable = false, unique = true, length = 32)
+    @Size(max = KEY_ID_LENGTH)
+    @Column(name = "key_id", nullable = false, unique = true, length = KEY_ID_LENGTH)
     open lateinit var keyId: String
 
     @Size(max = 255)

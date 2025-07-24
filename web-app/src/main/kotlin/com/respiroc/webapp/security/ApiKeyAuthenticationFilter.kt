@@ -17,6 +17,10 @@ class ApiKeyAuthenticationFilter(
     private val userService: UserService
 ) : OncePerRequestFilter() {
 
+    companion object {
+        private const val GENERIC_AUTH_ERROR = "Authentication failed"
+    }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -44,11 +48,11 @@ class ApiKeyAuthenticationFilter(
                     
                     SecurityContextHolder.getContext().authentication = authentication
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API key")
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, GENERIC_AUTH_ERROR)
                     return
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API key")
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, GENERIC_AUTH_ERROR)
                 return
             }
         }

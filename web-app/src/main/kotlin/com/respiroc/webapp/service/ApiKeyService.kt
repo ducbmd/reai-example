@@ -29,8 +29,8 @@ class ApiKeyService(
     )
 
     fun generateApiKey(userId: Long, tenantId: Long, name: String): GeneratedApiKey {
-        val keyId = generateRandomHex(32)
-        val secret = generateRandomHex(32)
+        val keyId = generateRandomHex(ApiKey.KEY_ID_LENGTH)
+        val secret = generateRandomHex(ApiKey.SECRET_LENGTH)
         val fullKey = "ak_$keyId.$secret"
         val hashedSecret = passwordEncoder.encode(secret)
         
@@ -59,7 +59,7 @@ class ApiKeyService(
         }
 
         val parts = fullKey.removePrefix("ak_").split(".", limit = 2)
-        if (parts.size != 2 || parts[0].length != 32 || parts[1].length != 32) {
+        if (parts.size != 2 || parts[0].length != ApiKey.KEY_ID_LENGTH || parts[1].length != ApiKey.SECRET_LENGTH) {
             return null
         }
 

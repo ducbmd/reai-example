@@ -45,6 +45,13 @@ class NavigationProvider {
                     NavigationSectionItem(label = "New Customer", url = "/contact/customer/new"),
                     NavigationSectionItem(label = "New Supplier", url = "/contact/supplier/new")
                 )
+            ),
+
+            NavigationSection(
+                title = "Settings", icon = "cog",
+                items = listOf(
+                    NavigationSectionItem(label = "User Settings", url = "/user-settings")
+                )
             )
         )
     }

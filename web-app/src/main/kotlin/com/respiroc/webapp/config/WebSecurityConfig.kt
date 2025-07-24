@@ -1,5 +1,6 @@
 package com.respiroc.webapp.config
 
+import com.respiroc.webapp.security.ApiKeyAuthenticationFilter
 import com.nimbusds.jose.jwk.source.ImmutableSecret
 import com.respiroc.user.application.UserService
 import com.respiroc.util.context.SpringUser
@@ -22,6 +23,7 @@ import org.springframework.security.oauth2.jwt.*
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.time.Duration
 import java.util.*
 import javax.crypto.SecretKey
@@ -30,7 +32,8 @@ import javax.crypto.spec.SecretKeySpec
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-    @param:Value("\${jwt.secret}") private val secret: String
+    @param:Value("\${jwt.secret}") private val secret: String,
+    private val apiKeyAuthenticationFilter: ApiKeyAuthenticationFilter
 ) {
 
     companion object {
@@ -56,13 +59,17 @@ class WebSecurityConfig(
         userService: UserService
     ): SecurityFilterChain {
         return http
+            .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .authorizeHttpRequests { requests ->
                 requests
                     .requestMatchers(*publicPaths).permitAll()
+                    .requestMatchers("/api/**").authenticated()
                     .anyRequest().authenticated()
             }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .csrf { it.disable() }
+            .csrf { csrf ->
+                csrf.disable()
+            }
             .oauth2ResourceServer { oauth2 ->
                 oauth2
                     .jwt { jwt ->

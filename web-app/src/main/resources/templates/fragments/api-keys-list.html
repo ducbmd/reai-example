@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:if="${#lists.isEmpty(apiKeysWithOwners)}" style="text-align: center; padding: 2rem; color: var(--wa-color-gray-60);">
+    <wa-icon name="key" style="font-size: 2rem; margin-bottom: 1rem;"></wa-icon>
+    <p>No API keys created yet.</p>
+    <p style="font-size: 0.875rem;">Create your first API key to get started with programmatic access.</p>
+</div>
+
+<div th:if="${not #lists.isEmpty(apiKeysWithOwners)}">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--wa-color-gray-20);">
+                <th style="text-align: left; padding: 1rem; font-weight: 600;">NAME</th>
+                <th style="text-align: left; padding: 1rem; font-weight: 600;">SECRET KEY</th>
+                <th style="text-align: left; padding: 1rem; font-weight: 600;">CREATED</th>
+                <th style="text-align: left; padding: 1rem; font-weight: 600;">LAST USED</th>
+                <th style="text-align: left; padding: 1rem; font-weight: 600;">CREATED BY</th>
+                <th style="text-align: right; padding: 1rem; font-weight: 600;">ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="apiKeyWithOwner : ${apiKeysWithOwners}" style="border-bottom: 1px solid var(--wa-color-gray-10);">
+                <td style="padding: 1rem;">
+                    <span th:text="${apiKeyWithOwner.apiKey.name}" style="font-weight: 500;">API Key Name</span>
+                </td>
+                <td style="padding: 1rem;">
+                    <code style="font-family: monospace; background-color: var(--wa-color-gray-10); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem; color: var(--wa-color-gray-80);">
+                        <span th:text="'ak_' + ${#strings.substring(apiKeyWithOwner.apiKey.keyId, 0, 3)} + '...' + ${#strings.substring(apiKeyWithOwner.apiKey.keyId, #strings.length(apiKeyWithOwner.apiKey.keyId) - 4)}">ak_123...xyz4</span>
+                    </code>
+                </td>
+                <td style="padding: 1rem;">
+                    <span th:text="${#temporals.format(apiKeyWithOwner.apiKey.createdAt, 'MMM dd, yyyy')}" style="color: var(--wa-color-gray-70);">Date</span>
+                </td>
+                <td style="padding: 1rem;">
+                    <span th:if="${apiKeyWithOwner.apiKey.lastUsedAt != null}" th:text="${#temporals.format(apiKeyWithOwner.apiKey.lastUsedAt, 'MMM dd, yyyy')}" style="color: var(--wa-color-gray-70);">Date</span>
+                    <span th:if="${apiKeyWithOwner.apiKey.lastUsedAt == null}" style="color: var(--wa-color-orange-60);">Never</span>
+                </td>
+                <td style="padding: 1rem;">
+                    <span th:text="${apiKeyWithOwner.ownerEmail}" style="color: var(--wa-color-gray-70);">user@example.com</span>
+                </td>
+                <td style="padding: 1rem; text-align: right;">
+                    <wa-button 
+                        size="small" 
+                        variant="danger" 
+                        th:data-key-id="${apiKeyWithOwner.apiKey.id}"
+                        th:data-key-name="${apiKeyWithOwner.apiKey.name}"
+                        onclick="showDeleteModal(this.dataset.keyId, this.dataset.keyName)"
+                        style="margin-left: 0.5rem;">
+                        <wa-icon name="trash"></wa-icon>
+                        Delete
+                    </wa-button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

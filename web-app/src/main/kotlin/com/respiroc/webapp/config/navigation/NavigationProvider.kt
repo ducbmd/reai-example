@@ -52,6 +52,13 @@ class NavigationProvider {
                 items = listOf(
                     NavigationSectionItem(label = "Bank Accounts Overview", url = "/bank/account"),
                 )
+            ),
+            
+            NavigationSection(
+                title = "Settings", icon = "cog",
+                items = listOf(
+                    NavigationSectionItem(label = "User Settings", url = "/user-settings")
+                )
             )
         )
     }
